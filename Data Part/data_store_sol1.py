@@ -67,30 +67,36 @@ class Data:
         return (dict)
 
     def export_db(self,filename):
+
+        def exportit():
+            db_backup = sqlite3.connect(filename)
+            newCursor = db_backup.cursor()
+            newCursor.execute('''
+                CREATE TABLE cows(cowId INTEGER,cowExtId INTEGER,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z)
+                ''')
+            db_backup.commit() #commit to database
+                
+            self.cursor.execute("SELECT * FROM cows")
+            all_rows = self.cursor.fetchall()
+            for row in all_rows:
+                newCursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13]))
+            db_backup.commit()
+            print("Data Saved Sucessfully")
+            return(1)
+
+
+
         if os.path.isfile(filename):
             try:
                 os.remove(filename)
-                db_backup = sqlite3.connect(filename)
-                newCursor = db_backup.cursor()
-                newCursor.execute('''
-                CREATE TABLE cows(cowId INTEGER,cowExtId INTEGER,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z)
-                ''')
-                db_backup.commit() #commit to database
+                exportit()
                 
-                self.cursor.execute("SELECT * FROM cows")
-                all_rows = self.cursor.fetchall()
-                for row in all_rows:
-                    newCursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13]))
-                db_backup.commit()
-                print("Data Saved Sucessfully")
-                return(1)
-
             except: 
                 #not sure to kill the code here or just return(error) or return (-1)
                 raise RuntimeError("You need to close file " ,filename, " before atempting to save to it!")
                 #return ("Close the file,idiot!")
-
-                
+        else:
+            exportit()
 
         
 
