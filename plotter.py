@@ -4,9 +4,23 @@ u_y = 0;
 i = 1
 t = 1
 
-di_x = {1:134234324, 2:1322344124, 3:131324234124, 4:12432423421414, 5:123421521252 }
-di_y = {1:345345435345, 2:2342343242, 3:2342352332, 4:324235432, 5:4532524353423}
+""" Commented by IcE 14/11/2018 18:01 """
 
+
+from data import Data
+data = Data()
+data.add_csv("DATA_01_05_Cow_42.csv")
+
+#uncomment this to use real data for cow 42
+di_x = data.getAccel(42,'acc_x_g')
+di_y = data.getAccel(42,'acc_y_g')
+
+#Uncomment this to use dummy data
+#di_x = {1:134234324, 2:1322344124, 3:131324234124, 4:12432423421414, 5:123421521252 }
+#di_y = {1:345345435345, 2:2342343242, 3:2342352332, 4:324235432, 5:4532524353423}
+
+print (di_x)
+exit()
 n = 5
 
 def initial_x(v_x):

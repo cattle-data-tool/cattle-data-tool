@@ -15,7 +15,7 @@ class Data:
             ''')
         self.db.commit() #commit to database
         
-        print("Database in ram created")
+        #print("Database in ram created")
 
     def add_csv(self, csvpath):
         if str(csvpath) not in self.added_files:
@@ -82,6 +82,7 @@ class Data:
             exportit()
  
     def getAccel(self,id,column = "acc_x_g"):
+        
         limb = "RF"
         #limb = "LF"
         #lib = "Ear"
@@ -89,13 +90,19 @@ class Data:
         #column = "acc_y_g"
         #column = "acc_x"
         #column = "acc_y"
-        self.cursor.execute("SELECT acc_x_g  FROM cows WHERE (cowId = ? AND snsrPos = ? ) ",(id,limb,))
+        queryStr = "SELECT %s  FROM cows WHERE (cowId = '%s' AND snsrPos = '%s' );" % (column,id,limb)
+        print(queryStr)
+        self.cursor.execute(queryStr)
         all_rows = self.cursor.fetchall()
+
+        if not all_rows : #return is empty
+            raise Exception("ID not in database or \ninvalid column name.")
+            
         step = 0
         dict = {}
         for row in all_rows: # row[0] returns the first column in the query 
               
-            a = (step,row[0])
+            a = (step,float(row[0]))
             dict[step] = a
             step += 1 
         
