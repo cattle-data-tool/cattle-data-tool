@@ -1,6 +1,5 @@
 #provided csv files have 16 measurments per second
 
-
 import sqlite3
 import csv
 import os #not sure if this works on Linux,ask Petar to check!
@@ -50,24 +49,8 @@ class Data:
             print("This file is already added")
             return(-1)
 
-    def getAccel(self,id,limb):
-        
-        self.cursor.execute("SELECT acc_x,acc_y  FROM cows WHERE (cowId = ? AND snsrPos = ? ) ",(id,limb,))
-        all_rows = self.cursor.fetchall()
-        step = 0
-        dict = {}
-        for row in all_rows: # row[0] returns the first column in the query 
-        
-            
-            a = (step,row[0],row[1])
-            dict[step] = a
-            step += 1 
-        
-
-        return (dict)
-
     def export_db(self,filename):
-
+    
         def exportit():
             db_backup = sqlite3.connect(filename)
             newCursor = db_backup.cursor()
@@ -97,78 +80,24 @@ class Data:
                 #return ("Close the file,idiot!")
         else:
             exportit()
-
+ 
+    def getAccel(self,id,column = "acc_x_g"):
+        limb = "RF"
+        #limb = "LF"
+        #lib = "Ear"
+        #column = "acc_x_g"
+        #column = "acc_y_g"
+        #column = "acc_x"
+        #column = "acc_y"
+        self.cursor.execute("SELECT acc_x_g  FROM cows WHERE (cowId = ? AND snsrPos = ? ) ",(id,limb,))
+        all_rows = self.cursor.fetchall()
+        step = 0
+        dict = {}
+        for row in all_rows: # row[0] returns the first column in the query 
+              
+            a = (step,row[0])
+            dict[step] = a
+            step += 1 
         
 
-        
-
-
-    
-    
-        
-            
-            
-
-
-
-"""
-db = sqlite3.connect(':memory:') #make database in ram
-
-cursor = db.cursor()#create new db cusor,can use it later 
-cursor.execute('''
-    CREATE TABLE cows(cowId INTEGER,cowExtId INTEGER,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z)
-''')
-db.commit() #commit to database
-
-
-def getGyro(id,limb):
-    cursor.execute("SELECT acc_x,acc_y  FROM cows WHERE (cowId = ? AND snsrPos = ? ) ",(id,limb,))
-    all_rows = cursor.fetchall()
-    step = 0
-    dict = {}
-    for row in all_rows: # row[0] returns the first column in the query 
-    
-        
-        a = (step,row[0],row[1])
-        dict[step] = a
-        step += 1 
-    
-
-    print (dict[1])
-            
-
-
-
-def inputcsv(csvpath):
-    cursor = db.cursor()
-    with open(csvpath) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        line_count = 0
-        for row in csv_reader:
-            if line_count == 0:
-                line_count+= 1 #skip first line of CSV file, Column names are in there
-                
-            else:          
-        
-                tstp = row[15] 
-                tstp = tstp[14:19]   #remove date and hours from timestamp
-            
-                line_count += 1
-                cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
-                
-        print(f'Processed {line_count} lines.')
-    # db.commit()
-        print("---------------------------------------------------------------")
-        db.commit()
-        
-        cursor = db.cursor()
-
-
-inputcsv("DATA_01_05_Cow_42.csv")
-inputcsv("DATA_01_05_Cow_195.csv")
-inputcsv("DATA_01_05_Cow_345.csv")
-inputcsv("DATA_01_05_Cow_407.csv")
-#getGyro(42)
-
-getGyro(195,'RB')
-"""
+        return (dict)
