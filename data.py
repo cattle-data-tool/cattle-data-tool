@@ -28,7 +28,7 @@ class Data:
                     elif line_count == 1:
                         tstp = row[15] 
                         tstp = tstp[14:19]
-                        self.cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
+                        self.cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
                         indentifier = (row[6],row[7],row[9])
                         line_count += 1
                         
@@ -38,10 +38,8 @@ class Data:
                         tstp = tstp[14:19]   #remove date and hours from timestamp
                     
                         line_count += 1
-                        self.cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
-            
-            
-            
+                        self.cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
+                        
             self.db.commit()
             self.added_files += str(csvpath)
             return(indentifier)
@@ -85,12 +83,12 @@ class Data:
         
         limb = "RF"
         #limb = "LF"
-        #lib = "Ear"
+        #lib = "Ear" prob won't never use this
         #column = "acc_x_g"
         #column = "acc_y_g"
         #column = "acc_x"
         #column = "acc_y"
-        queryStr = "SELECT %s  FROM cows WHERE (cowId = '%s' AND snsrPos = '%s' );" % (column,id,limb)
+        queryStr = "SELECT %s FROM cows WHERE (cowId = '%s' AND snsrPos = '%s' );" % (column,id,limb)
         print(queryStr)
         self.cursor.execute(queryStr)
         all_rows = self.cursor.fetchall()
