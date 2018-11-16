@@ -91,7 +91,7 @@ class Data:
         #column = "acc_x"
         #column = "acc_y"
         queryStr = "SELECT %s  FROM cows WHERE (cowId = '%s' AND snsrPos = '%s' );" % (column,id,limb)
-        print(queryStr)
+        #print(queryStr)
         self.cursor.execute(queryStr)
         all_rows = self.cursor.fetchall()
 
@@ -102,7 +102,7 @@ class Data:
         dict = {}
         for row in all_rows: # row[0] returns the first column in the query 
               
-            a = (step,float(row[0]))
+            a = (int(step),float(row[0]))
             dict[step] = a
             step += 1 
         
