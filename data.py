@@ -4,7 +4,7 @@ import sqlite3
 import csv
 import os #not sure if this works on Linux,ask Petar to check!
 
-class Data:
+class CsvDataBase:
     db = sqlite3.connect(':memory:')
     cursor = db.cursor()
     added_files = "" #list of added files
@@ -98,13 +98,14 @@ class Data:
         if not all_rows : #return is empty
             raise Exception("ID not in database or \ninvalid column name.")
             
-        step = 0
-        dict = {}
+        
+        dict = []
         for row in all_rows: # row[0] returns the first column in the query 
               
             a = (float(row[0]))
-            dict[step] = a
-            step += 1 
+            dict.append(a)
+            
         
-
+        
+        
         return (dict)
