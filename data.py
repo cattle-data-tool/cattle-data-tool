@@ -2,23 +2,45 @@
 
 import sqlite3
 import csv
-import os #not sure if this works on Linux,ask Petar to check!
+import os 
 
 class CsvDataBase:
     db = sqlite3.connect(':memory:')
     cursor = db.cursor()
     added_files = "" #list of added files
     def __init__(self):
-        
-        self.cursor.execute('''
-         CREATE TABLE cows(dataId INTEGER PRIMARY KEY AUTOINCREMENT,cowId INTEGER,cowExtId INTEGER,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z)
-            ''')
-        self.db.commit() #commit to database
-        
+        self.init_db()
         #print("Database in ram created")
+    
+    def init_db(self):
+        self.cursor.execute("CREATE TABLE cows(dataId INTEGER PRIMARY KEY AUTOINCREMENT,cowId INTEGER,cowExtId INTEGER,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z);")
+        self.cursor.execute("CREATE TABLE addedFiles(iD INTEGER PRIMARY KEY AUTOINCREMENT,filename TEXT);")
+        self.db.commit() #commit to database
+    
+    def clear_db(self):
+        try:
+            self.cursor.execute("DROP TABLE cows;")
+            self.cursor.execute("DROP TABLE addedFiles;")
+            self.db.commit()
+        except:
+            pass
+
+    def addedFiles_add(self,filename):
+        dbStr = ("INSERT INTO addedFiles(filename) VALUES ('%s');") % (filename)
+        self.cursor.execute(dbStr)
+        self.db.commit()
+
+    def addedFiles(self):
+        self.cursor.execute("SELECT filename FROM addedFiles;")
+        allFiles = self.cursor.fetchall()
+        added = []
+        for fileName in allFiles:
+            added.append(fileName[0])
+
+        return(added)
 
     def add_csv(self, csvpath):
-        if str(csvpath) not in self.added_files:
+        if str(csvpath) not in self.addedFiles():
             with open(csvpath) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 line_count = 0
@@ -36,14 +58,15 @@ class CsvDataBase:
                 
                         tstp = row[15] 
                         tstp = tstp[14:19]   #remove date and hours from timestamp
-                    
                         line_count += 1
                         self.cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
             
             
             
-            self.db.commit()
+            
             self.added_files += str(csvpath)
+            self.addedFiles_add(csvpath)
+            
             return(indentifier)
         else:
             print("This file is already added")
@@ -52,34 +75,41 @@ class CsvDataBase:
     def export_db(self,filename):
     
         def exportit():
-            db_backup = sqlite3.connect(filename)
-            newCursor = db_backup.cursor()
-            newCursor.execute('''
-                CREATE TABLE cows(cowId INTEGER,cowExtId INTEGER,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z)
-                ''')
-            db_backup.commit() #commit to database
-                
-            self.cursor.execute("SELECT * FROM cows")
-            all_rows = self.cursor.fetchall()
-            for row in all_rows:
-                newCursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13]))
-            db_backup.commit()
-            print("Data Saved Sucessfully")
-            return(1)
-
-
-
-        if os.path.isfile(filename):
             try:
-                os.remove(filename)
-                exportit()
-                
-            except: 
-                #not sure to kill the code here or just return(error) or return (-1)
-                raise RuntimeError("You need to close file " ,filename, " before atempting to save to it!")
-                #return ("Close the file,idiot!")
-        else:
-            exportit()
+
+                dbfile = filename
+                if os.path.exists(dbfile):
+                    os.remove(dbfile) # remove last db dump
+
+                new_db = sqlite3.connect(dbfile)
+                c = new_db.cursor() 
+                c.executescript("\r\n".join(self.db.iterdump()))
+                new_db.close()
+                print("Data Saved Sucessfully")
+                return(1)
+            except:
+                raise RuntimeError("Error has ocured,make sure file",filename," is closed")
+
+        exportit()
+
+    def load_db(self,filename):
+        
+        def loadit():
+            try:
+                self.clear_db()
+                dbfile = filename
+                new_db = sqlite3.connect(dbfile)
+                c = self.db.cursor() 
+                c.executescript("\r\n".join(new_db.iterdump()))
+                new_db.close()
+                print("Data Imported Sucessfully")
+                return(1)
+            except:
+                raise RuntimeError("Error has ocured,make sure file",filename," is closed")
+
+        loadit()
+       
+            
  
     def getAccel(self,id,column = "acc_x_g"):
         
@@ -96,16 +126,12 @@ class CsvDataBase:
         all_rows = self.cursor.fetchall()
 
         if not all_rows : #return is empty
-            raise Exception("ID not in database or \ninvalid column name.")
+            raise Exception("ID not in database or invalid column name.")
             
         
         dict = []
-        for row in all_rows: # row[0] returns the first column in the query 
-              
+        for row in all_rows: # row[0] returns the first column in the query    
             a = (float(row[0]))
             dict.append(a)
-            
-        
-        
-        
+
         return (dict)
