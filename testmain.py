@@ -22,7 +22,7 @@ for cord in cords:
     cord_y.append(cord[1])
     print(cord)
 
-exit()
+
 import matplotlib.pyplot as plt
 x = cord_x
 y = cord_y
