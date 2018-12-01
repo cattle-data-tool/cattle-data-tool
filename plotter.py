@@ -1,3 +1,4 @@
+import random
 from statistics import mean
 
 class Plotter:
@@ -28,8 +29,8 @@ class Plotter:
         i = 0 
         t = 1
         n = (len(di_x) - 1)
-        v_x = 0
-        v_y = 0
+        v_x = random.randint(-5, 5)
+        v_y = random.randint(-5, 5)
         while i <= n:
         
             a_x = di_x[i] #current accels from csv file
