@@ -1,12 +1,9 @@
-from statistics import mean
-
-
 class Plotter:
 
    
 
-    def __init__(self,Data):
-        self.data = Data
+    def __init__(self,data):
+        self.data = data
         self.t = 1
         self.dict = []
         self.u_x = 0
@@ -29,6 +26,8 @@ class Plotter:
         i = 0 
         t = 1
         n = (len(di_x) - 1)
+        v_x = 0
+        v_y = 0
         while i <= n:
         
             a_x = di_x[i] #current accels from csv file
@@ -39,8 +38,8 @@ class Plotter:
             #print("s_x calculated value",s_x)
             s_y = (self.u_y*t)+(0.5*(a_y*t))
 
-            v_x = self.u_x+s_x 
-            v_y = self.u_y+s_y
+            v_x += s_x
+            v_y += s_y
 
             self.position(v_x, v_y) #stores all calulated cordinates in dict list
             #print("v_x sent to dict is",v_x)
@@ -50,49 +49,8 @@ class Plotter:
             self.u_y = a_y
 
             i+=1
-        
+
         return(self.dict)
-
-    def plot(self,cowid):
-        _data = self.plotter_math(cowid)
-        AVG_RES = 160
-        coords_x = []
-        coords_y = []
-        for coord in _data:
-
-            coords_x.append(coord[0])
-            coords_y.append(coord[1])
-
-
-        i = 0
-        _cordxavg = []
-        _cordxavgcache = []
-
-        for n in range(0,len(coords_x)):
-            _cordxavgcache.append(coords_x[n]) #append current coord to cache
-            i += 1
-
-            if i % AVG_RES == 0: #every AVG_RES of mesurments
-                i = 0
-                _cordxavg.append(mean(_cordxavgcache)) #append avg of cache to variable _cordxavg
-                _cordxavgcache = [] #clear cache
-
-
-        i = 0
-        _cordyavg = []
-        _cordyavgcache = []
-        
-        for n in range(0,len(coords_y)):
-            _cordyavgcache.append(coords_y[n]) #append current coord to cache
-            i += 1
-
-            if i % AVG_RES == 0: #every AVG_RES of mesurments
-                i = 0
-                _cordyavg.append(mean(_cordyavgcache)) #append avg of cache to variable _cordxavg
-                _cordyavgcache = [] #clear cache
-    
-        return(_cordxavg,_cordyavg)
-
 
 
 
