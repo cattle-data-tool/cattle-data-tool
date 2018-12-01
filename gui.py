@@ -8,6 +8,22 @@ import tkinter as tk
 from tkinter import ttk
 
 LARGE_FONT = ("Verdana", 12)
+SMALL_FONT = ("Verdana", 10)
+
+def popupmsg(msg):
+    popup = tk.Tk()
+
+    def leavemini():
+        popup.destroy()
+
+    popup.title("Notification")
+    label = ttk.Label(popup, text = msg, font = LARGE_FONT)
+    label.pack(side = "top", fill = "x", pady = 10, padx = 20)
+
+    b1 = ttk.Button(popup, text = "Okay", command = leavemini)
+    b1.pack(pady = 10, padx = 20)
+    popup.mainloop()
+
 
 class Gui(tk.Tk):
     def __init__(self, data, plotter, *args, **kwargs):
