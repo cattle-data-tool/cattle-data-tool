@@ -21,8 +21,8 @@ coords_y = []
 for coord in coords:
     
  
-    coord_x.append(coord[0])
-    coord_y.append(coord[1])
+    coords_x.append(coord[0])
+    coords_y.append(coord[1])
     print(coord)
 
 
