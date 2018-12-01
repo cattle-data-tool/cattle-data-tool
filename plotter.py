@@ -2,9 +2,6 @@ import random
 from statistics import mean
 
 class Plotter:
-
-
-
     def __init__(self,data):
         self.data = data
         self.t = 1
@@ -12,14 +9,11 @@ class Plotter:
         self.u_x = 0
         self.u_y = 0
 
-
-
     def position(self,v_x, v_y):
         a = (v_x/1000, v_y/1000)
         self.dict.append(a)
 
     def plotter_math(self,id):
-
         di_x = self.data.getAccel(id,'acc_x_g')
         di_y = self.data.getAccel(id,'acc_y_g')
         self.t = 1
@@ -55,6 +49,27 @@ class Plotter:
 
         return(self.dict)
 
+    def normalize(self, coords_x, coords_y):
+        starting_x = coords_x[0]
+        starting_y = coords_y[0]
+
+        final_x = coords_x[len(coords_x) - 1]
+        final_y = coords_y[len(coords_y) - 1]
+
+        average_x = (starting_x + final_x) / 2
+        average_y = (starting_y + final_y) / 2
+
+        rand_x = random.randint(-3, 3)
+        rand_y = random.randint(-3, 3)
+
+        for i in range(len(coords_x)):
+            coords_x[i] = coords_x[i] - average_x + rand_x
+
+        for i in range(len(coords_y)):
+            coords_y[i] = coords_y[i] - average_y + rand_y
+
+        return coords_x, coords_y
+
 
     def plot(self,cowid):
             _data = self.plotter_math(cowid)
@@ -65,7 +80,6 @@ class Plotter:
 
                 coords_x.append(coord[0])
                 coords_y.append(coord[1])
-
 
             i = 0
             _cordxavg = []
@@ -80,7 +94,6 @@ class Plotter:
                     _cordxavg.append(mean(_cordxavgcache)) #append avg of cache to variable _cordxavg
                     _cordxavgcache = [] #clear cache
 
-
             i = 0
             _cordyavg = []
             _cordyavgcache = []
@@ -93,5 +106,7 @@ class Plotter:
                     i = 0
                     _cordyavg.append(mean(_cordyavgcache)) #append avg of cache to variable _cordxavg
                     _cordyavgcache = [] #clear cache
+
+            _cordxavg, _cordyavg = self.normalize(_cordxavg, _cordyavg)
 
             return(_cordxavg,_cordyavg)
