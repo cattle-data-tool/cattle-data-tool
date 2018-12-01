@@ -1,12 +1,12 @@
 class Plotter:
 
-    t = 1
-    dict = []
-    u_x = 0
-    u_y = 0
+   
 
     def __init__(self):
-        pass
+        self.t = 1
+        self.dict = []
+        self.u_x = 0
+        self.u_y = 0
     
     
 
