@@ -6,5 +6,5 @@ data = CsvDataBase()
 plotter = Plotter(data)
 
 app = Gui(data, plotter)
-app.geometry("1280x720")
+app.geometry("800x600")
 app.mainloop()
