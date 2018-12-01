@@ -14,18 +14,6 @@ plotter = Plotter(data)
 #data.add_csv("DATA_01_05_Cow_42.csv") #will skip this file again,because it was saved to localdb,exported,loaded...and it is still in db
 
 
-coords = plotter.plotter_math(42)
+xcord,ycord = plotter.plot(42)
 
-coords_x = []
-coords_y = []
-for coord in coords:
-    
- 
-    coords_x.append(coord[0])
-    coords_y.append(coord[1])
-    print(coord)
-
-
-import matplotlib.pyplot as plt
-plt.plot(coords_x, coords_y)
-plt.show()
+print(len(xcord),len(ycord))
