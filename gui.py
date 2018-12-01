@@ -102,23 +102,34 @@ class GraphPage(tk.Frame):
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
+        # TODO: fix windows file paths
         controller.data.add_csv("DATA_01_05_Cow_42.csv")
-        controller.data.add_csv("DATA_01_05_Cow_42.csv")
+        controller.data.add_csv(".xml files/DATA_01_05_Cow_195.csv")
+        controller.data.add_csv(".xml files/DATA_01_05_Cow_345.csv")
+        controller.data.add_csv(".xml files/DATA_01_05_Cow_407.csv")
 
-        accels_x = controller.data.getAccel(42,'acc_x_g')
-        accels_y = controller.data.getAccel(42,'acc_y_g')
-        coords = controller.plotter.plotter_math(42)
+        # accels_x = controller.data.getAccel(42,'acc_x_g')
+        # accels_y = controller.data.getAccel(42,'acc_y_g')
+        # coords = controller.plotter.plotter_math(42)
 
-        coords_x = []
-        coords_y = []
-        for coord in coords:
-            coords_x.append(coord[0])
-            coords_y.append(coord[1])
+        # coords_x = []
+        # coords_y = []
+        # for coord in coords:
+        #     coords_x.append(coord[0])
+        #     coords_y.append(coord[1])
+
+        coords_x, coords_y = controller.plotter.plot(345)
+        coords_x2, coords_y2 = controller.plotter.plot(42)
+        coords_x3, coords_y3 = controller.plotter.plot(195)
+        coords_x4, coords_y4 = controller.plotter.plot(407)
 
         f = Figure()
         a = f.add_subplot(111)
 
         a.plot(coords_x, coords_y)
+        a.plot(coords_x2, coords_y2)
+        a.plot(coords_x3, coords_y3)
+        a.plot(coords_x4, coords_y4)
 
         canvas = FigureCanvasTkAgg(f, self)
         canvas.draw()
