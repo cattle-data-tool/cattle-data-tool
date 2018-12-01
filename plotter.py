@@ -2,8 +2,8 @@ class Plotter:
 
    
 
-    def __init__(self,data):
-        self.data = data
+    def __init__(self,Data):
+        self.data = Data
         self.t = 1
         self.dict = []
         self.u_x = 0
