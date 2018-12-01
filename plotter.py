@@ -2,7 +2,8 @@ class Plotter:
 
    
 
-    def __init__(self):
+    def __init__(self,data):
+        self.data = data
         self.t = 1
         self.dict = []
         self.u_x = 0
@@ -14,8 +15,10 @@ class Plotter:
         a = (v_x, v_y)
         self.dict.append(a)
 
-    def plotter_math(self,di_x,di_y):
-
+    def plotter_math(self,id):
+        
+        di_x = self.data.getAccel(id,'acc_x_g')
+        di_y = self.data.getAccel(id,'acc_y_g')
         self.t = 1
         self.dict = []
         self.u_x = 0
