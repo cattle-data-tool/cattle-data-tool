@@ -14,7 +14,7 @@ class Plotter:
     
 
     def position(self,v_x, v_y):
-        a = (v_x, v_y)
+        a = (v_x/1000, v_y/1000)
         self.dict.append(a)
 
     def plotter_math(self,id):
