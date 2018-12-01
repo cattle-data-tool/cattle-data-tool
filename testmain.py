@@ -14,20 +14,18 @@ plotter = Plotter(data)
 #data.add_csv("DATA_01_05_Cow_42.csv") #will skip this file again,because it was saved to localdb,exported,loaded...and it is still in db
 
 
-cords = plotter.plotter_math(42)
+coords = plotter.plotter_math(42)
 
-cord_x = []
-cord_y = []
-for cord in cords:
+coords_x = []
+coords_y = []
+for coord in coords:
     
  
-    cord_x.append(cord[0])
-    cord_y.append(cord[1])
-    print(cord)
+    coord_x.append(coord[0])
+    coord_y.append(coord[1])
+    print(coord)
 
 
 import matplotlib.pyplot as plt
-x = cord_x
-y = cord_y
-plt.plot(x, y)
+plt.plot(coords_x, coords_y)
 plt.show()
