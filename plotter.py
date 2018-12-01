@@ -59,8 +59,8 @@ class Plotter:
         average_x = (starting_x + final_x) / 2
         average_y = (starting_y + final_y) / 2
 
-        rand_x = random.randint(-3, 3)
-        rand_y = random.randint(-3, 3)
+        rand_x = random.randint(-1, 1)
+        rand_y = random.randint(-1, 1)
 
         for i in range(len(coords_x)):
             coords_x[i] = coords_x[i] - average_x + rand_x
