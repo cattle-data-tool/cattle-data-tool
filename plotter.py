@@ -1,3 +1,5 @@
+from statistics import mean
+
 class Plotter:
 
    
@@ -53,6 +55,45 @@ class Plotter:
         return(self.dict)
 
 
+def plot(self,cowid):
+        _data = self.plotter_math(cowid)
+        AVG_RES = 160
+        coords_x = []
+        coords_y = []
+        for coord in _data:
+
+            coords_x.append(coord[0])
+            coords_y.append(coord[1])
+
+
+        i = 0
+        _cordxavg = []
+        _cordxavgcache = []
+
+        for n in range(0,len(coords_x)):
+            _cordxavgcache.append(coords_x[n]) #append current coord to cache
+            i += 1
+
+            if i % AVG_RES == 0: #every AVG_RES of mesurments
+                i = 0
+                _cordxavg.append(mean(_cordxavgcache)) #append avg of cache to variable _cordxavg
+                _cordxavgcache = [] #clear cache
+
+
+        i = 0
+        _cordyavg = []
+        _cordyavgcache = []
+        
+        for n in range(0,len(coords_y)):
+            _cordyavgcache.append(coords_y[n]) #append current coord to cache
+            i += 1
+
+            if i % AVG_RES == 0: #every AVG_RES of mesurments
+                i = 0
+                _cordyavg.append(mean(_cordyavgcache)) #append avg of cache to variable _cordxavg
+                _cordyavgcache = [] #clear cache
+    
+        return(_cordxavg,_cordyavg)
 
 
 
