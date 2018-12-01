@@ -27,6 +27,32 @@ class Gui(tk.Tk):
         container.grid_rowconfigure(0, weight = 1)
         container.grid_columnconfigure(0, weight = 1)
 
+        menubar = tk.Menu(container)
+
+        filemenu = tk.Menu(menubar, tearoff = 0)
+        filemenu.add_command(label = "Save Workspace", command = lambda: popupmsg("Not Implemented Yet"))
+        filemenu.add_command(label = "Load Workspace", command = lambda: popupmsg("Not Implemented Yet"))
+        filemenu.add_separator()
+        filemenu.add_command(label = "Exit", command = self.destroy)
+        menubar.add_cascade(label = "File", menu = filemenu)
+
+        datamenu = tk.Menu(menubar, tearoff = 0)
+        datamenu.add_command(label = "Import CSV", command = lambda: popupmsg("Not Implemented Yet"))
+        datamenu.add_command(label = "Remove Selected", command = lambda: popupmsg("Not Implemented Yet"))
+        datamenu.add_command(label = "Plot Selected", command = lambda: popupmsg("Not Implemented Yet"))
+        menubar.add_cascade(label = "Data", menu = datamenu)
+
+        selectmenu = tk.Menu(menubar, tearoff = 0)
+        selectmenu.add_command(label = "Select All", command = lambda: popupmsg("Not Implemented Yet"))
+        selectmenu.add_command(label = "Select None", command = lambda: popupmsg("Not Implemented Yet"))
+        menubar.add_cascade(label = "Select", menu = selectmenu)
+
+        helpmenu = tk.Menu(menubar, tearoff = 0)
+        helpmenu.add_command(label = "Open Documentation", command = lambda: popupmsg("Not Implemented Yet"))
+        menubar.add_cascade(label = "Help", menu = helpmenu)
+
+        tk.Tk.config(self, menu = menubar)
+
         self.frames = {}
 
         for f in (StartPage, GraphPage):
@@ -65,7 +91,7 @@ class GraphPage(tk.Frame):
 
         accels_x = controller.data.getAccel(42,'acc_x_g')
         accels_y = controller.data.getAccel(42,'acc_y_g')
-        coords = controller.plotter.plotter_math(accels_x,accels_y)
+        coords = controller.plotter.plotter_math(42)
 
         coords_x = []
         coords_y = []
@@ -73,7 +99,7 @@ class GraphPage(tk.Frame):
             coords_x.append(coord[0])
             coords_y.append(coord[1])
 
-        f = Figure(figsize = (5, 5), dpi = 100)
+        f = Figure()
         a = f.add_subplot(111)
 
         a.plot(coords_x, coords_y)
