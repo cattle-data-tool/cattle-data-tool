@@ -7,6 +7,8 @@ from matplotlib.figure import Figure
 import tkinter as tk
 from tkinter import ttk
 
+from collections import namedtuple
+
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 10)
 
@@ -23,6 +25,28 @@ def popupmsg(msg):
     b1 = ttk.Button(popup, text = "Okay", command = leavemini)
     b1.pack(pady = 10, padx = 20)
     popup.mainloop()
+
+def display_graph(curve_list):
+    graph_page = tk.Toplevel()
+    graph_page.title("Movement Graph")
+    icon_img = tk.Image("photo", file="icon.png")
+    graph_page.tk.call('wm','iconphoto',graph_page._w, icon_img)
+
+    f = Figure()
+    a = f.add_subplot(111)
+
+    for curve in curve_list:
+        a.plot(curve.x, curve.y)
+
+    canvas = FigureCanvasTkAgg(f, graph_page)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side = tk.TOP, fill = tk.BOTH, expand = True)
+
+    toolbar = NavigationToolbar2Tk(canvas, graph_page)
+    toolbar.update()
+    canvas._tkcanvas.pack(side = tk.TOP, fill = tk.BOTH, expand = True)
+
+    graph_page.mainloop()
 
 
 class Gui(tk.Tk):
@@ -71,7 +95,7 @@ class Gui(tk.Tk):
 
         self.frames = {}
 
-        for f in (StartPage, GraphPage):
+        for f in (StartPage,):
             frame = f(container, self)
             self.frames[f] = frame
             frame.grid(row = 0, column = 0, sticky = "nsew")
@@ -88,53 +112,22 @@ class StartPage(tk.Frame):
         label = tk.Label(self, text = "Hello, Gui!", font = LARGE_FONT)
         label.pack(pady = 10, padx = 10)
 
-        button1 = ttk.Button(self, text = "Show Graph",
-                            command = lambda: controller.show_frame(GraphPage))
-        button1.pack()
-
-class GraphPage(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text = "Graph Page", font = LARGE_FONT)
-        label.pack(pady = 10, padx = 10)
-
-        button1 = ttk.Button(self, text = "Back to Home",
-                            command = lambda: controller.show_frame(StartPage))
-        button1.pack()
-
         # TODO: fix windows file paths
         controller.data.add_csv("DATA_01_05_Cow_42.csv")
         controller.data.add_csv(".xml files/DATA_01_05_Cow_195.csv")
         controller.data.add_csv(".xml files/DATA_01_05_Cow_345.csv")
         controller.data.add_csv(".xml files/DATA_01_05_Cow_407.csv")
 
-        # accels_x = controller.data.getAccel(42,'acc_x_g')
-        # accels_y = controller.data.getAccel(42,'acc_y_g')
-        # coords = controller.plotter.plotter_math(42)
+        ids = [345, 42, 195, 407]
 
-        # coords_x = []
-        # coords_y = []
-        # for coord in coords:
-        #     coords_x.append(coord[0])
-        #     coords_y.append(coord[1])
+        Curve = namedtuple('Curve', 'x y')
 
-        coords_x, coords_y = controller.plotter.plot(345)
-        coords_x2, coords_y2 = controller.plotter.plot(42)
-        coords_x3, coords_y3 = controller.plotter.plot(195)
-        coords_x4, coords_y4 = controller.plotter.plot(407)
+        curve_list = []
 
-        f = Figure()
-        a = f.add_subplot(111)
+        for id in ids:
+            coords_x, coords_y = controller.plotter.plot(id)
+            curve_list.append(Curve(coords_x, coords_y))
 
-        a.plot(coords_x, coords_y)
-        a.plot(coords_x2, coords_y2)
-        a.plot(coords_x3, coords_y3)
-        a.plot(coords_x4, coords_y4)
-
-        canvas = FigureCanvasTkAgg(f, self)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side = tk.TOP, fill = tk.BOTH, expand = True)
-
-        toolbar = NavigationToolbar2Tk(canvas, self)
-        toolbar.update()
-        canvas._tkcanvas.pack(side = tk.TOP, fill = tk.BOTH, expand = True)
+        button1 = ttk.Button(self, text = "Show Graph",
+                                    command = lambda: display_graph(curve_list))
+        button1.pack()
