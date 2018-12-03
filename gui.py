@@ -117,8 +117,11 @@ class StartPage(tk.Frame):
         controller.data.add_csv(".xml files/DATA_01_05_Cow_195.csv")
         controller.data.add_csv(".xml files/DATA_01_05_Cow_345.csv")
         controller.data.add_csv(".xml files/DATA_01_05_Cow_407.csv")
+        controller.data.add_csv(".xml files/DATA_02_01_Cow_19.csv")
+        controller.data.add_csv(".xml files/DATA_02_02_Cow_115.csv")
+        controller.data.add_csv(".xml files/DATA_02_02_Cow_608.csv")
 
-        ids = [345, 42, 195, 407]
+        ids = [345, 42, 195, 407, 19, 115, 608]
 
         Curve = namedtuple('Curve', 'x y')
 
