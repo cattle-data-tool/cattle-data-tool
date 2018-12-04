@@ -88,15 +88,15 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        self.header = ['ID', 'Month', 'Day', 'File Name']
+        self.header = ['ID', 'External ID', 'Internal ID', 'Day', 'Month', 'File Name']
         self.data = [
-        (195, 1, 5, "DATA_01_05_Cow_195.csv"),
-        (42, 1, 5, "DATA_01_05_Cow_42.csv"),
-        (345, 1, 5, "DATA_01_05_Cow_345.csv"),
-        (407, 1, 5, "DATA_01_05_Cow_407.csv"),
-        (19, 2, 1, "DATA_02_01_Cow_19.csv"),
-        (115, 2, 2, "DATA_02_02_Cow_115.csv"),
-        (608, 2, 3, "DATA_02_02_Cow_608.csv")
+            controller.data.add_csv("DATA_01_05_Cow_42.csv"),
+            controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_195.csv")),
+            controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_345.csv")),
+            controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_407.csv")),
+            controller.data.add_csv(os.path.join(".xml files", "DATA_02_01_Cow_19.csv")),
+            controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_115.csv")),
+            controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_608.csv"))
         ]
 
         menubar = tk.Menu(controller)
@@ -105,7 +105,7 @@ class StartPage(tk.Frame):
         filemenu.add_command(label = "Save Workspace", command = lambda: popupmsg("Not Implemented Yet"))
         filemenu.add_command(label = "Load Workspace", command = lambda: popupmsg("Not Implemented Yet"))
         filemenu.add_separator()
-        filemenu.add_command(label = "Exit", command = self.destroy)
+        filemenu.add_command(label = "Exit", command = controller.destroy)
         menubar.add_cascade(label = "File", menu = filemenu)
 
         datamenu = tk.Menu(menubar, tearoff = 0)
@@ -127,14 +127,6 @@ class StartPage(tk.Frame):
 
         # label = tk.Label(self, text = "Hello, Gui!", font = LARGE_FONT)
         # label.pack(pady = 10, padx = 10)
-
-        controller.data.add_csv("DATA_01_05_Cow_42.csv")
-        controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_195.csv"))
-        controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_345.csv"))
-        controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_407.csv"))
-        controller.data.add_csv(os.path.join(".xml files", "DATA_02_01_Cow_19.csv"))
-        controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_115.csv"))
-        controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_608.csv"))
 
         ids = [345, 42, 195, 407, 19, 115, 608]
 
