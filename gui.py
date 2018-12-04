@@ -57,6 +57,7 @@ class Gui(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         self.data = data
+
         self.plotter = plotter
 
         self.title("Cattle Data Tool")
@@ -86,6 +87,17 @@ class Gui(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+
+        self.header = ['ID', 'Month', 'Day', 'File Name']
+        self.data = [
+        (195, 1, 5, "DATA_01_05_Cow_195.csv"),
+        (42, 1, 5, "DATA_01_05_Cow_42.csv"),
+        (345, 1, 5, "DATA_01_05_Cow_345.csv"),
+        (407, 1, 5, "DATA_01_05_Cow_407.csv"),
+        (19, 2, 1, "DATA_02_01_Cow_19.csv"),
+        (115, 2, 2, "DATA_02_02_Cow_115.csv"),
+        (608, 2, 3, "DATA_02_02_Cow_608.csv")
+        ]
 
         menubar = tk.Menu(controller)
 
@@ -138,18 +150,7 @@ class StartPage(tk.Frame):
         #                             command = lambda: display_graph(curve_list))
         # button1.pack()
 
-        header = ['ID', 'Month', 'Day', 'File Name']
-        data = [
-        (195, 1, 5, "DATA_01_05_Cow_195.csv"),
-        (42, 1, 5, "DATA_01_05_Cow_42.csv"),
-        (345, 1, 5, "DATA_01_05_Cow_345.csv"),
-        (407, 1, 5, "DATA_01_05_Cow_407.csv"),
-        (19, 2, 1, "DATA_02_01_Cow_19.csv"),
-        (115, 2, 2, "DATA_02_02_Cow_115.csv"),
-        (608, 2, 3, "DATA_02_02_Cow_608.csv")
-        ]
-
-        table = Table(header, data)
+        table = Table(self.header, self.data)
         table.container.pack(fill = tk.BOTH, expand = True)
 
 class Table:
