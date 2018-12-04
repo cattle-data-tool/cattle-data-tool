@@ -61,13 +61,13 @@ class CsvDataBase:
                         tstp = row[15] 
                         tstp = tstp[14:19]
                         cowId = int(row[6])
-                        internalId = int(row[7])
-                        externalId = int(row[9])
+                        externalId = int(row[7])
+                        internalId = int(row[9])
                         a,b,c,d,e = csvpath.split("_")
                         day = int(b)
                         month = int(c)
                         self.cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
-                        indentifier = (cowId,internalId,externalId,day,month,_filename) #return id,intid,extid,day,month,filename
+                        indentifier = (cowId,externalId,internalId,day,month,_filename) #return id,intid,extid,day,month,filename
                         line_count += 1
                         
                     else:          
