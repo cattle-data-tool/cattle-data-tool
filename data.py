@@ -7,7 +7,7 @@ import os
 class CsvDataBase:
     db = sqlite3.connect(':memory:')
     cursor = db.cursor()
-    added_files = "" #list of added files
+ 
     def __init__(self):
         self.init_db()
         #print("Database in ram created")
@@ -45,6 +45,11 @@ class CsvDataBase:
         return(added)
 
     def add_csv(self, csvpath):
+        filename = csvpath.split("DATA")
+        filename = filename [-1]
+        _filename = "DATA"
+        _filename += filename
+        
         if str(csvpath) not in self.addedFiles():
             with open(csvpath) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
@@ -62,7 +67,7 @@ class CsvDataBase:
                         day = int(b)
                         month = int(c)
                         self.cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
-                        indentifier = (cowId,internalId,externalId,day,month,csvpath) #return id,intid,extid,day,month,filename
+                        indentifier = (cowId,internalId,externalId,day,month,_filename) #return id,intid,extid,day,month,filename
                         line_count += 1
                         
                     else:          
@@ -75,8 +80,8 @@ class CsvDataBase:
             
             
             
-            self.added_files += str(csvpath)
-            self.addedFiles_add(csvpath,cowId)
+            
+            self.addedFiles_add(_filename,cowId)
             
             return(indentifier)
         else:
