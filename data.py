@@ -14,7 +14,7 @@ class CsvDataBase:
     
     def init_db(self):
         self.cursor.execute("CREATE TABLE cows(dataId INTEGER PRIMARY KEY AUTOINCREMENT,cowId INTEGER,cowExtId INTEGER,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z);")
-        self.cursor.execute("CREATE TABLE addedFiles(iD INTEGER PRIMARY KEY AUTOINCREMENT,filename TEXT);")
+        self.cursor.execute("CREATE TABLE addedFiles(iD INTEGER PRIMARY KEY AUTOINCREMENT,filename TEXT,cowId INTEGER);")
         self.db.commit() #commit to database
     
     def clear_db(self):
@@ -25,9 +25,14 @@ class CsvDataBase:
         except:
             pass
 
-    def addedFiles_add(self,filename):
-        dbStr = ("INSERT INTO addedFiles(filename) VALUES ('%s');") % (filename)
+    def addedFiles_add(self,filename,id):
+        dbStr = ("INSERT INTO addedFiles(filename,cowId) VALUES ('%s',%s);") % (filename,id)
         self.cursor.execute(dbStr)
+        self.db.commit()
+
+    def addedFiles_remove(self,id):
+        sql = "DELETE FROM addedFiles where cowId = %s" % (id)
+        self.cursor.execute(sql)
         self.db.commit()
 
     def addedFiles(self):
@@ -50,8 +55,14 @@ class CsvDataBase:
                     elif line_count == 1:
                         tstp = row[15] 
                         tstp = tstp[14:19]
+                        cowId = int(row[6])
+                        internalId = int(row[7])
+                        externalId = int(row[9])
+                        a,b,c,d,e = csvpath.split("_")
+                        day = int(b)
+                        month = int(c)
                         self.cursor.execute('''INSERT INTO cows(cowId,cowExtId,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)''',(row[6],row[7],row[12],tstp,row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23],row[24]))
-                        indentifier = (row[6],row[7],row[9])
+                        indentifier = (cowId,internalId,externalId,day,month,csvpath) #return id,intid,extid,day,month,filename
                         line_count += 1
                         
                     else:          
@@ -65,12 +76,21 @@ class CsvDataBase:
             
             
             self.added_files += str(csvpath)
-            self.addedFiles_add(csvpath)
+            self.addedFiles_add(csvpath,cowId)
             
             return(indentifier)
         else:
             print("This file is already added")
             return(-1)
+    
+    def remove_by_id(self,id):
+        sql = "DELETE FROM cows WHERE cowId = %s;" % (id)
+        self.cursor.execute(sql)
+        self.db.commit()
+
+        self.addedFiles_remove(id)
+
+
 
     def export_db(self,filename):
     
