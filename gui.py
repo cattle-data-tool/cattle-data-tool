@@ -137,17 +137,15 @@ class StartPage(tk.Frame):
         #                             command = lambda: display_graph(curve_list))
         # button1.pack()
 
-        header = ['car', 'repair']
+        header = ['ID', 'Month', 'Day', 'File Name']
         data = [
-        ('Hyundai', 'brakes') ,
-        ('Honda', 'light') ,
-        ('Lexus', 'battery') ,
-        ('Benz', 'wiper') ,
-        ('Ford', 'tire') ,
-        ('Chevy', 'air') ,
-        ('Chrysler', 'piston') ,
-        ('Toyota', 'brake pedal') ,
-        ('BMW', 'seat')
+        (195, 1, 5, "DATA_01_05_Cow_195.csv"),
+        (42, 1, 5, "DATA_01_05_Cow_42.csv"),
+        (345, 1, 5, "DATA_01_05_Cow_345.csv"),
+        (407, 1, 5, "DATA_01_05_Cow_407.csv"),
+        (19, 2, 1, "DATA_02_01_Cow_19.csv"),
+        (115, 2, 2, "DATA_02_02_Cow_115.csv"),
+        (608, 2, 3, "DATA_02_02_Cow_608.csv")
         ]
 
         table = Table(header, data)
@@ -199,8 +197,15 @@ class Table:
 
     def sortby(self, tree, col, descending):
         data = [(tree.set(child, col), child) for child in tree.get_children('')]
-        data.sort(reverse = descending)
+        data.sort(key = self.tupleToInt, reverse = descending)
         for x, item in enumerate(data):
             tree.move(item[1], '', x)
         tree.heading(col, command = lambda col = col: self.sortby(
             tree, col, int(not descending)))
+
+    def tupleToInt(self, tup):
+        try:
+            tupInt = (int(tup[0]), tup[1])
+            return tupInt
+        except:
+            return tup
