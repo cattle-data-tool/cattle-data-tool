@@ -10,6 +10,8 @@ from tkinter import ttk
 
 from collections import namedtuple
 
+import os
+
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 10)
 
@@ -114,14 +116,13 @@ class StartPage(tk.Frame):
         # label = tk.Label(self, text = "Hello, Gui!", font = LARGE_FONT)
         # label.pack(pady = 10, padx = 10)
 
-        # TODO: fix windows file paths
         controller.data.add_csv("DATA_01_05_Cow_42.csv")
-        controller.data.add_csv(".xml files/DATA_01_05_Cow_195.csv")
-        controller.data.add_csv(".xml files/DATA_01_05_Cow_345.csv")
-        controller.data.add_csv(".xml files/DATA_01_05_Cow_407.csv")
-        controller.data.add_csv(".xml files/DATA_02_01_Cow_19.csv")
-        controller.data.add_csv(".xml files/DATA_02_02_Cow_115.csv")
-        controller.data.add_csv(".xml files/DATA_02_02_Cow_608.csv")
+        controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_195.csv"))
+        controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_345.csv"))
+        controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_407.csv"))
+        controller.data.add_csv(os.path.join(".xml files", "DATA_02_01_Cow_19.csv"))
+        controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_115.csv"))
+        controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_608.csv"))
 
         ids = [345, 42, 195, 407, 19, 115, 608]
 
