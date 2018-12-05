@@ -7,6 +7,7 @@ from matplotlib.figure import Figure
 import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import ttk
+from tkinter import filedialog
 
 from collections import namedtuple
 
@@ -92,15 +93,7 @@ class StartPage(tk.Frame):
         tk.Frame.__init__(self, self.parent)
 
         self.header = ['ID', 'External ID', 'Internal ID', 'Day', 'Month', 'File Name']
-        self.data = [
-            controller.data.add_csv("DATA_01_05_Cow_42.csv"),
-            controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_195.csv")),
-            controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_345.csv")),
-            controller.data.add_csv(os.path.join(".xml files", "DATA_01_05_Cow_407.csv")),
-            controller.data.add_csv(os.path.join(".xml files", "DATA_02_01_Cow_19.csv")),
-            controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_115.csv")),
-            controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_608.csv"))
-        ]
+        self.data = []
 
         self.table = Table(self.header, self.data)
 
@@ -151,10 +144,15 @@ class StartPage(tk.Frame):
         self.table.container.pack(fill = tk.BOTH, expand = True)
 
     def save_workspace(self):
-        popupmsg("Not Implemented Yet")
+        filename =  filedialog.asksaveasfilename(
+            title = "Save Workspace", filetypes = (("cattle data file","*.cdf"),))
+        self.controller.data.export_db(filename)
 
     def load_workspace(self):
-        popupmsg("Not Implemented Yet")
+        filename =  filedialog.askopenfilename(
+            title = "Load Workspace", filetypes = (("cattle data file","*.cdf"),))
+        self.data = self.controller.data.load_db(filename)
+        self.table.update_tree(self.data)
 
     def exit(self):
         self.controller.destroy()
@@ -198,6 +196,14 @@ class Table:
         self.setup_widgets()
         self.build_tree()
 
+    def update_tree(self, data):
+        self.data = data
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        for item in self.data:
+            self.tree.insert('', 'end', values = item)
+
     def get_selected_ids(self):
         iids = self.tree.selection()
         list = []
@@ -236,10 +242,12 @@ class Table:
         for item in self.data:
             self.tree.insert('', 'end', values = item)
 
-            for x, val in enumerate(item):
-                col_w = tkFont.Font().measure(val)
-                if self.tree.column(self.header[x], width = None) < col_w:
-                    self.tree.column(self.header[x], width = col_w)
+        sample = (6081, 2112, 30104665, 21, 21, 'DATA_02_02_Cow_6108.csv')
+
+        for x, val in enumerate(sample):
+            col_w = tkFont.Font().measure(val)
+            if self.tree.column(self.header[x], width = None) < col_w:
+                self.tree.column(self.header[x], width = col_w)
 
     def sortby(self, tree, col, descending):
         data = [(tree.set(child, col), child) for child in tree.get_children('')]
