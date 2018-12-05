@@ -158,7 +158,11 @@ class StartPage(tk.Frame):
         self.controller.destroy()
 
     def import_csv(self):
-        popupmsg("Not Implemented Yet")
+        filenames =  filedialog.askopenfilenames(
+            title = "Load Workspace", filetypes = (("comma-seperated values file","*.csv"),))
+        for filename in filenames:
+            self.data.append(self.controller.data.add_csv(filename))
+        self.table.update_tree(self.data)
 
     def remove_selected(self):
         for (iid, id) in self.table.get_selected_ids():
