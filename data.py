@@ -14,7 +14,7 @@ class CsvDataBase:
     
     def init_db(self):
         self.cursor.execute("CREATE TABLE cows(dataId INTEGER PRIMARY KEY AUTOINCREMENT,cowId INTEGER,cowExtId INTEGER,snsrPos,timeStamp,acc_x,acc_x_g,acc_y,acc_y_g,acc_z,acc_z_g,gyro_x,gyro_y,gyro_z);")
-        self.cursor.execute("CREATE TABLE addedFiles(iD INTEGER PRIMARY KEY AUTOINCREMENT,filename TEXT,cowId INTEGER);")
+        self.cursor.execute("CREATE TABLE addedFiles(iD INTEGER PRIMARY KEY AUTOINCREMENT, cowId INTEGER, externalId INTEGER, internalId INTEGER, day INTEGER, month INTEGER, filename TEXT);")
         self.db.commit() #commit to database
     
     def clear_db(self):
@@ -25,8 +25,8 @@ class CsvDataBase:
         except:
             pass
 
-    def addedFiles_add(self,filename,id):
-        dbStr = ("INSERT INTO addedFiles(filename,cowId) VALUES ('%s',%s);") % (filename,id)
+    def addedFiles_add(self,id,exid,inid,d,m,fn):
+        dbStr = ("INSERT INTO addedFiles(cowId,externalId,internalId,day,month,filename) VALUES (%s,%s,%s,%s,%s,'%s');") % (id,exid,inid,d,m,fn)
         self.cursor.execute(dbStr)
         self.db.commit()
 
@@ -36,11 +36,11 @@ class CsvDataBase:
         self.db.commit()
 
     def addedFiles(self):
-        self.cursor.execute("SELECT filename FROM addedFiles;")
+        self.cursor.execute("SELECT  cowId , externalId , internalId, day , month , filename FROM addedFiles;")
         allFiles = self.cursor.fetchall()
         added = []
-        for fileName in allFiles:
-            added.append(fileName[0])
+        for data in allFiles:
+            added.append(data)
 
         return(added)
 
@@ -81,7 +81,7 @@ class CsvDataBase:
             
             
             
-            self.addedFiles_add(_filename,cowId)
+            self.addedFiles_add(cowId,externalId,internalId,day,month,_filename)
             
             return(indentifier)
         else:
@@ -128,11 +128,12 @@ class CsvDataBase:
                 c.executescript("\r\n".join(new_db.iterdump()))
                 new_db.close()
                 print("Data Imported Sucessfully")
-                return(1)
+                
             except:
                 raise RuntimeError("Error has ocured,make sure file",filename," is closed")
 
         loadit()
+        return(self.addedFiles())
        
             
  
