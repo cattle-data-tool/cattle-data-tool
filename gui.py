@@ -86,7 +86,10 @@ class Gui(tk.Tk):
 
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.parent = parent
+
+        tk.Frame.__init__(self, self.parent)
 
         self.header = ['ID', 'External ID', 'Internal ID', 'Day', 'Month', 'File Name']
         self.data = [
@@ -99,51 +102,93 @@ class StartPage(tk.Frame):
             controller.data.add_csv(os.path.join(".xml files", "DATA_02_02_Cow_608.csv"))
         ]
 
-        menubar = tk.Menu(controller)
+        self.table = Table(self.header, self.data)
+
+        menubar = tk.Menu(self.controller)
 
         filemenu = tk.Menu(menubar, tearoff = 0)
-        filemenu.add_command(label = "Save Workspace", command = lambda: popupmsg("Not Implemented Yet"))
-        filemenu.add_command(label = "Load Workspace", command = lambda: popupmsg("Not Implemented Yet"))
+        filemenu.add_command(
+            label = "Save Workspace",
+            command = lambda: self.save_workspace())
+        filemenu.add_command(
+            label = "Load Workspace",
+            command = lambda: self.load_workspace())
         filemenu.add_separator()
-        filemenu.add_command(label = "Exit", command = controller.destroy)
+        filemenu.add_command(
+            label = "Exit",
+            command = lambda: self.exit())
         menubar.add_cascade(label = "File", menu = filemenu)
 
         datamenu = tk.Menu(menubar, tearoff = 0)
-        datamenu.add_command(label = "Import CSV", command = lambda: popupmsg("Not Implemented Yet"))
-        datamenu.add_command(label = "Remove Selected", command = lambda: popupmsg("Not Implemented Yet"))
-        datamenu.add_command(label = "Plot Selected", command = lambda: display_graph(curve_list))
+        datamenu.add_command(
+            label = "Import CSV",
+            command = lambda: self.import_csv())
+        datamenu.add_command(
+            label = "Remove Selected",
+            command = lambda: self.remove_selected())
+        datamenu.add_command(
+            label = "Plot Selected",
+            command = lambda: self.plot_selected())
         menubar.add_cascade(label = "Data", menu = datamenu)
 
         selectmenu = tk.Menu(menubar, tearoff = 0)
-        selectmenu.add_command(label = "Select All", command = lambda: popupmsg("Not Implemented Yet"))
-        selectmenu.add_command(label = "Select None", command = lambda: popupmsg("Not Implemented Yet"))
+        selectmenu.add_command(
+            label = "Select All",
+            command = lambda: self.select_all())
+        selectmenu.add_command(
+            label = "Select None",
+            command = lambda: self.select_none())
         menubar.add_cascade(label = "Select", menu = selectmenu)
 
         helpmenu = tk.Menu(menubar, tearoff = 0)
-        helpmenu.add_command(label = "Open Documentation", command = lambda: popupmsg("Not Implemented Yet"))
+        helpmenu.add_command(
+            label = "Open Documentation",
+            command = lambda: self.open_documentation())
         menubar.add_cascade(label = "Help", menu = helpmenu)
 
-        tk.Tk.config(controller, menu = menubar)
+        tk.Tk.config(self.controller, menu = menubar)
 
-        # label = tk.Label(self, text = "Hello, Gui!", font = LARGE_FONT)
-        # label.pack(pady = 10, padx = 10)
+        self.table.container.pack(fill = tk.BOTH, expand = True)
 
-        ids = [345, 42, 195, 407, 19, 115, 608]
+    def save_workspace(self):
+        popupmsg("Not Implemented Yet")
 
+    def load_workspace(self):
+        popupmsg("Not Implemented Yet")
+
+    def exit(self):
+        self.controller.destroy()
+
+    def import_csv(self):
+        popupmsg("Not Implemented Yet")
+
+    def remove_selected(self):
+        for (iid, id) in self.table.get_selected_ids():
+            self.table.tree.delete(iid)
+            self.controller.data.remove_by_id(id)
+
+            for data in self.data:
+                if data[0] == id:
+                    self.data.remove(data)
+
+    def plot_selected(self):
         Curve = namedtuple('Curve', 'x y')
-
         curve_list = []
+        for (iid, id) in self.table.get_selected_ids():
+            x, y = self.controller.plotter.plot(id)
+            curve_list.append(Curve(x, y))
+        display_graph(curve_list)
 
-        for id in ids:
-            coords_x, coords_y = controller.plotter.plot(id)
-            curve_list.append(Curve(coords_x, coords_y))
+    def select_all(self):
+        iids = self.table.tree.get_children()
+        self.table.tree.selection_set(iids)
 
-        # button1 = ttk.Button(self, text = "Show Graph",
-        #                             command = lambda: display_graph(curve_list))
-        # button1.pack()
+    def select_none(self):
+        iids = self.table.tree.get_children()
+        self.table.tree.selection_remove(iids)
 
-        table = Table(self.header, self.data)
-        table.container.pack(fill = tk.BOTH, expand = True)
+    def open_documentation(self):
+        popupmsg("Not Implemented Yet")
 
 class Table:
     def __init__(self, header, data):
@@ -152,6 +197,13 @@ class Table:
         self.tree = None
         self.setup_widgets()
         self.build_tree()
+
+    def get_selected_ids(self):
+        iids = self.tree.selection()
+        list = []
+        for iid in iids:
+            list.append((iid, int(self.tree.item(iid, 'values')[0])))
+        return list
 
     def setup_widgets(self):
         self.container = ttk.Frame()
