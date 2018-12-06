@@ -181,13 +181,16 @@ class StartPage(tk.Frame):
     def save_workspace(self):
         filename =  filedialog.asksaveasfilename(
             title = "Save Workspace", filetypes = (("cattle data file","*.cdf"),))
+        if not filename.find(".cdf"):
+            filename += ".cdf"
         self.controller.data.export_db(filename)
 
     def load_workspace(self):
         filename =  filedialog.askopenfilename(
             title = "Load Workspace", filetypes = (("cattle data file","*.cdf"),))
-        self.data = self.controller.data.load_db(filename)
-        self.table.update_tree(self.data)
+        if len(filename) > 1:
+            self.data = self.controller.data.load_db(filename)
+            self.table.update_tree(self.data)
 
     def exit(self):
         self.controller.destroy()
