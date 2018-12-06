@@ -3,6 +3,8 @@ matplotlib.use("TkAgg")
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
 
 import tkinter as tk
 import tkinter.font as tkFont
@@ -15,6 +17,7 @@ import os
 
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 10)
+style.use('dark_background')
 
 def popupmsg(msg):
     popup = tk.Tk()
@@ -30,7 +33,21 @@ def popupmsg(msg):
     b1.pack(pady = 10, padx = 20)
     popup.mainloop()
 
-def display_graph(curve_list):
+def display_graph(curve_list, cow_list):
+    graph_colors = [
+        '#FF0000',
+        '#008080',
+        '#0000FF',
+        '#00FF00',
+        '#008000',
+        '#FFFF00',
+        '#800000',
+        '#808080',
+        '#000000',
+        '#808000',
+        '#000080'
+    ]
+
     graph_page = tk.Toplevel()
     graph_page.title("Movement Graph")
     icon_img = tk.Image("photo", file="icon.png")
@@ -39,8 +56,12 @@ def display_graph(curve_list):
     f = Figure()
     a = f.add_subplot(111)
 
+    current_curve_list = []
+
+    Curve = namedtuple('Curve', 'x y')
+
     for curve in curve_list:
-        a.plot(curve.x, curve.y)
+        current_curve_list.append(Curve([], []))
 
     canvas = FigureCanvasTkAgg(f, graph_page)
     canvas.draw()
@@ -50,6 +71,20 @@ def display_graph(curve_list):
     toolbar.update()
     canvas._tkcanvas.pack(side = tk.TOP, fill = tk.BOTH, expand = True)
 
+    def animate(i):
+        for j in range(len(curve_list)):
+            if len(curve_list[j].x) > 0:
+                x = curve_list[j].x.pop(0)
+                y = curve_list[j].y.pop(0)
+
+                current_curve_list[j].x.append(x)
+                current_curve_list[j].y.append(y)
+
+                a.plot(current_curve_list[j].x, current_curve_list[j].y, graph_colors[j])
+        a.legend(cow_list)
+
+    ani = animation.FuncAnimation(f, animate, interval = 500)
+    graph_page.geometry("800x600")
     graph_page.mainloop()
 
 
@@ -176,10 +211,12 @@ class StartPage(tk.Frame):
     def plot_selected(self):
         Curve = namedtuple('Curve', 'x y')
         curve_list = []
+        cow_list = []
         for (iid, id) in self.table.get_selected_ids():
             x, y = self.controller.plotter.plot(id)
             curve_list.append(Curve(x, y))
-        display_graph(curve_list)
+            cow_list.append("Cow " + str(id))
+        display_graph(curve_list, cow_list)
 
     def select_all(self):
         iids = self.table.tree.get_children()
