@@ -9,10 +9,12 @@ class Plotter:
         self.u_x = 0
         self.u_y = 0
 
+    #adding positions obtained to the dictionary
     def position(self,v_x, v_y):
         a = (v_x/1000, v_y/1000)
         self.dict.append(a)
 
+    #Calculation of the positions
     def plotter_math(self,id):
         di_x = self.data.getAccel(id,'acc_x_g')
         di_y = self.data.getAccel(id,'acc_y_g')
@@ -49,6 +51,7 @@ class Plotter:
 
         return(self.dict)
 
+    #Normalizing the coordinates obtained
     def normalize(self, coords_x, coords_y):
         starting_x = coords_x[0]
         starting_y = coords_y[0]
@@ -71,6 +74,7 @@ class Plotter:
         return coords_x, coords_y
 
 
+    #Average of coordinates
     def plot(self,cowid):
             _data = self.plotter_math(cowid)
             AVG_RES = 160
