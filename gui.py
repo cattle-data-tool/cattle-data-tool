@@ -13,6 +13,8 @@ from tkinter import filedialog
 
 from collections import namedtuple
 
+import webbrowser
+
 import os
 
 LARGE_FONT = ("Verdana", 12)
@@ -230,7 +232,7 @@ class StartPage(tk.Frame):
         self.table.tree.selection_remove(iids)
 
     def open_documentation(self):
-        popupmsg("Not Implemented Yet")
+        webbrowser.open('docs.pdf')
 
 class Table:
     def __init__(self, header, data):
