@@ -17,25 +17,33 @@ import webbrowser
 
 import os
 
+# Set Fonts
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 10)
+
+# Set Matplotlib Style
 style.use('dark_background')
 
+# Function to display a notification popup
 def popupmsg(msg):
     popup = tk.Tk()
 
     def leavemini():
         popup.destroy()
 
+    # Display the msg param as text
     popup.title("Notification")
     label = ttk.Label(popup, text = msg, font = LARGE_FONT)
     label.pack(side = "top", fill = "x", pady = 10, padx = 20)
 
+    # Put in an Okay button to dismiss notification
     b1 = ttk.Button(popup, text = "Okay", command = leavemini)
     b1.pack(pady = 10, padx = 20)
     popup.mainloop()
 
+# Display the animated graph
 def display_graph(curve_list, cow_list):
+    # Set colors for movement lines
     graph_colors = [
         '#FF0000',
         '#008080',
@@ -50,29 +58,33 @@ def display_graph(curve_list, cow_list):
         '#000080'
     ]
 
+    # Create the graph windows and set properties
     graph_page = tk.Toplevel()
     graph_page.title("Movement Graph")
     icon_img = tk.Image("photo", file="icon.png")
     graph_page.tk.call('wm','iconphoto',graph_page._w, icon_img)
 
+    # Create matplotlib figure
     f = Figure()
     a = f.add_subplot(111)
 
+    # Create empty list of curves
     current_curve_list = []
-
     Curve = namedtuple('Curve', 'x y')
-
     for curve in curve_list:
         current_curve_list.append(Curve([], []))
 
+    # Draw the graph in the window
     canvas = FigureCanvasTkAgg(f, graph_page)
     canvas.draw()
     canvas.get_tk_widget().pack(side = tk.TOP, fill = tk.BOTH, expand = True)
 
+    # Draw the matplotlib toolbar to the window
     toolbar = NavigationToolbar2Tk(canvas, graph_page)
     toolbar.update()
     canvas._tkcanvas.pack(side = tk.TOP, fill = tk.BOTH, expand = True)
 
+    # Function to call every mainloop update to animate graph
     def animate(i):
         for j in range(len(curve_list)):
             if len(curve_list[j].x) > 0:
@@ -85,43 +97,50 @@ def display_graph(curve_list, cow_list):
                 a.plot(current_curve_list[j].x, current_curve_list[j].y, graph_colors[j])
         a.legend(cow_list)
 
+    # Set the animation to run every 0.5 seconds
     ani = animation.FuncAnimation(f, animate, interval = 500)
+
+    # Run the graph window main loop
     graph_page.geometry("800x600")
     graph_page.mainloop()
 
-
+# Main controller class for the GUI
 class Gui(tk.Tk):
     def __init__(self, data, plotter, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
+        # Save the reference to the data module
         self.data = data
 
+        # Save reference to the plotter module
         self.plotter = plotter
 
+        # Set title and icon
         self.title("Cattle Data Tool")
         icon_img = tk.Image("photo", file="icon.png")
         self.tk.call('wm','iconphoto',self._w, icon_img)
 
+        # Create a main container for the app
         container = tk.Frame(self)
-
         container.pack(side = "top", fill = "both", expand = True)
-
         container.grid_rowconfigure(0, weight = 1)
         container.grid_columnconfigure(0, weight = 1)
 
+        # Create instances of all frames
         self.frames = {}
-
         for f in (StartPage,):
             frame = f(container, self)
             self.frames[f] = frame
             frame.grid(row = 0, column = 0, sticky = "nsew")
 
+        # Show the starting frame
         self.show_frame(StartPage)
 
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
 
+# Starting frame class
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         self.controller = controller
@@ -129,13 +148,15 @@ class StartPage(tk.Frame):
 
         tk.Frame.__init__(self, self.parent)
 
+        # Initialize the table
         self.header = ['ID', 'External ID', 'Internal ID', 'Day', 'Month', 'File Name']
         self.data = []
-
         self.table = Table(self.header, self.data)
 
+        # Create the menu bar
         menubar = tk.Menu(self.controller)
 
+        # Set file menu callbacks
         filemenu = tk.Menu(menubar, tearoff = 0)
         filemenu.add_command(
             label = "Save Workspace",
@@ -149,6 +170,7 @@ class StartPage(tk.Frame):
             command = lambda: self.exit())
         menubar.add_cascade(label = "File", menu = filemenu)
 
+        # Set data menu callbacks
         datamenu = tk.Menu(menubar, tearoff = 0)
         datamenu.add_command(
             label = "Import CSV",
@@ -161,6 +183,7 @@ class StartPage(tk.Frame):
             command = lambda: self.plot_selected())
         menubar.add_cascade(label = "Data", menu = datamenu)
 
+        # Set select menu callbacks
         selectmenu = tk.Menu(menubar, tearoff = 0)
         selectmenu.add_command(
             label = "Select All",
@@ -170,6 +193,7 @@ class StartPage(tk.Frame):
             command = lambda: self.select_none())
         menubar.add_cascade(label = "Select", menu = selectmenu)
 
+        # Set help menu callbacks
         helpmenu = tk.Menu(menubar, tearoff = 0)
         helpmenu.add_command(
             label = "Open Documentation",
@@ -180,6 +204,7 @@ class StartPage(tk.Frame):
 
         self.table.container.pack(fill = tk.BOTH, expand = True)
 
+    # File menu functions
     def save_workspace(self):
         filename =  filedialog.asksaveasfilename(
             title = "Save Workspace", filetypes = (("cattle data file","*.cdf"),))
@@ -197,6 +222,7 @@ class StartPage(tk.Frame):
     def exit(self):
         self.controller.destroy()
 
+    # Data menu functions
     def import_csv(self):
         filenames =  filedialog.askopenfilenames(
             title = "Load Workspace", filetypes = (("comma-seperated values file","*.csv"),))
@@ -223,6 +249,7 @@ class StartPage(tk.Frame):
             cow_list.append("Cow " + str(id))
         display_graph(curve_list, cow_list)
 
+    # Select Menu functions
     def select_all(self):
         iids = self.table.tree.get_children()
         self.table.tree.selection_set(iids)
@@ -231,9 +258,11 @@ class StartPage(tk.Frame):
         iids = self.table.tree.get_children()
         self.table.tree.selection_remove(iids)
 
+    # Help menu functions
     def open_documentation(self):
         webbrowser.open('docs.pdf')
 
+# Table class to display cattle list, using a ttk Treeview
 class Table:
     def __init__(self, header, data):
         self.header = header
@@ -242,6 +271,7 @@ class Table:
         self.setup_widgets()
         self.build_tree()
 
+    # Update the tree with new data
     def update_tree(self, data):
         self.data = data
         for item in self.tree.get_children():
@@ -250,6 +280,7 @@ class Table:
         for item in self.data:
             self.tree.insert('', 'end', values = item)
 
+    # Get ID's of the selected cows
     def get_selected_ids(self):
         iids = self.tree.selection()
         list = []
@@ -257,6 +288,7 @@ class Table:
             list.append((iid, int(self.tree.item(iid, 'values')[0])))
         return list
 
+    # Set up the treeview widgets
     def setup_widgets(self):
         self.container = ttk.Frame()
 
@@ -277,6 +309,7 @@ class Table:
         self.container.grid_columnconfigure(0, weight = 1)
         self.container.grid_rowconfigure(0, weight = 1)
 
+    # Build the tree using the data
     def build_tree(self):
         for col in self.header:
             self.tree.heading(col, text = col.title(),
@@ -295,6 +328,7 @@ class Table:
             if self.tree.column(self.header[x], width = None) < col_w:
                 self.tree.column(self.header[x], width = col_w)
 
+    # Sort the tree by a particular column
     def sortby(self, tree, col, descending):
         data = [(tree.set(child, col), child) for child in tree.get_children('')]
         data.sort(key = self.tupleToInt, reverse = descending)
@@ -303,6 +337,7 @@ class Table:
         tree.heading(col, command = lambda col = col: self.sortby(
             tree, col, int(not descending)))
 
+    # Helper function to sort different data types
     def tupleToInt(self, tup):
         try:
             tupInt = (int(tup[0]), tup[1])
