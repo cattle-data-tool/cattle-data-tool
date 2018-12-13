@@ -44,19 +44,11 @@ def popupmsg(msg):
 # Display the animated graph
 def display_graph(curve_list, cow_list):
     # Set colors for movement lines
-    graph_colors = [
-        '#FF0000',
-        '#008080',
-        '#0000FF',
-        '#00FF00',
-        '#008000',
-        '#FFFF00',
-        '#800000',
-        '#808080',
-        '#000000',
-        '#808000',
-        '#000080'
-    ]
+    graph_colors = ['#FF0000','#008080','#0000FF','#00FF00','#008000','#FFFF00', '#800000',
+                    '#808080', '#000000', '#808000', '#000080', '#FF0000', '#008080', '#0000FF',
+                    '#00FF00', '#008000', '#FFFF00', '#800000', '#808080', '#000000', '#808000',
+                    '#000080', '#FF0000', '#008080', '#0000FF', '#00FF00', '#008000', '#FFFF00',
+                    '#800000', '#808080', '#000000', '#808000', '#000080']
 
     # Create the graph windows and set properties
     graph_page = tk.Toplevel()
